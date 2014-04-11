@@ -63,16 +63,54 @@ def featurize(train_articles, test_articles):
 
         return word_set
 
-    def get_word_dic():
+    def get_word_dic(train_articles, test_articles, stopword_set):
+    	word_dict = {}
+        word_set = set()
+    	for line in train_articles:
+            tmpList = line.split()  
+            tmpSet = set(tmpList)        
+      
+            for word in tmpSet:
+                if word not in stopword_set and not contains_digits(word):
+                    if word in word_dict:
+                        word_dict[word] = word_dict[word] + 1;
+		    else:
+			word_dict[word] = 1
+
+        cur_line = 0
+
+    	for line in test_articles:
+            tmpList = line.split()
+            tmpSet = set(tmpList)        
+            for word in tmpSet:
+                if word not in stopword_set and not contains_digits(word):
+                    if word in word_dict:
+                        word_dict[word] = word_dict[word] + 1;
+                    else:
+                        word_dict[word] = 1
+    	#print word_dict["game"]
+        #sys.exit()
+        i = 0
+        for word in word_dict:
+            if word_dict[word] > 200:
+                print word + " " + (str)(word_dict[word])
+                i = i + 1
+
+        print i
+        sys.exit()
+    	return word_dict
+			 
+
+	
 
     ### REPLACE THE REST OF THIS FUNCTION WITH YOUR FEATURE GENERATION CODE ###
     def make_features(articles):
             # store the stop words
         stopword_set = get_stopword()
         #print stopword_list
-        word_set = get_word_set(train_articles, test_articles, stopword_set)
-
-        word_list = list(word_set)
+        #word_set = get_word_set(train_articles, test_articles, stopword_set)
+	word_dict = get_word_dic(train_articles, test_articles, stopword_set)
+        word_list = []#list(word_set)
 
         Matrix = [[0 for x in xrange(len(word_list))] for x in xrange(len(articles))]
         #print len(Matrix)
@@ -85,7 +123,6 @@ def featurize(train_articles, test_articles):
                 Matrix[i][j] = tmpList.count("sign")
                 #print Matrix[i][j]
                 #sys.exit()
-    
                 j = j + 1
             i = i + 1
         
