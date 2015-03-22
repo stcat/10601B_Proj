@@ -33,7 +33,7 @@ def featurize(train_articles, test_articles):
 
     def get_stopword():
         stopword_set = set()
-        with open("stopwords.txt", 'r') as in_file:
+        with open("parameters.txt", 'r') as in_file:
             for line in in_file.readlines():
                 line = line.rstrip()      # Remove trailing whitespace.
                 if line:                  # Only process non-empty lines.

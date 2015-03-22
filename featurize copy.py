@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-from __future__ import division 
-import sys
-#from sets import Set
-import re
-from math import log
 
+import sys
+from sets import Set
+import re
 
 def featurize(train_articles, test_articles):
     '''
@@ -93,58 +91,44 @@ def featurize(train_articles, test_articles):
     	#print word_dict["game"]
         #sys.exit()
         i = 0
-        word_list = []
         for word in word_dict:
             if word_dict[word] > 500:
-                #print word + " " + (str)(word_dict[word])
-                word_list.append(word)
+                print word + " " + (str)(word_dict[word])
                 i = i + 1
 
-        #print i
-        #sys.exit()
-    	return word_list
+        print i
+        sys.exit()
+    	return word_dict
 			 
 
 	
 
     ### REPLACE THE REST OF THIS FUNCTION WITH YOUR FEATURE GENERATION CODE ###
     def make_features(articles):
-        # store the stop words
+            # store the stop words
         stopword_set = get_stopword()
-        word_list = get_word_dic(train_articles, test_articles, stopword_set)
-        Matrix = [[0 for x in xrange(len(word_list))] for x in xrange(len(articles))]
-        idf_counter = []
-        for word in word_list:
-            i = 0
-            for line in train_articles:
-                if word in line:
-                    i = i + 1
-            for line in test_articles:
-                if word in line:
-                    i = i + 1
-            idf_counter.append(i)
-        #print idf_counter
-        idf = [log((len(test_articles)+len(test_articles))/n) for n in idf_counter]
+        #print stopword_list
+        #word_set = get_word_set(train_articles, test_articles, stopword_set)
+	word_dict = get_word_dic(train_articles, test_articles, stopword_set)
+        word_list = []#list(word_set)
 
+        Matrix = [[0 for x in xrange(len(word_list))] for x in xrange(len(articles))]
+        #print len(Matrix)
+        #sys.exit() 
         i = 0
-        for line in train_articles:
-            tf_counter = []
-            tf = []
-            tmpList = []
+        for line in articles:
+            j = 0
             tmpList = line.split()
             for word in word_list:
-                tf_counter.append(tmpList.count(word))
-            t = max(tmpList.count(word) for word in tmpList)
-            tf = [(0.5+(0.5*n/t)) for n in tf_counter]
-            for j in range(len(word_list)):
-                Matrix[i][j] = tf[j]*idf[j]
-            #print Matrix[i]
-            i = i + 1
-            #if i == 10:
+                Matrix[i][j] = tmpList.count("sign")
+                #print Matrix[i][j]
                 #sys.exit()
-
-        return Matrix
-       
+                j = j + 1
+            i = i + 1
+        
+        print len(word_set)
+        sys.exit()
+        return [[len(article.split()), int(article.startswith('the'))] for article in articles]
     return (make_features(train_articles), make_features(test_articles))
 
 def articles_to_features(train_in_name, train_out_name, test_in_name, test_out_name):
@@ -155,12 +139,12 @@ def articles_to_features(train_in_name, train_out_name, test_in_name, test_out_n
 
 
     train_features, test_features = featurize(train_lines, test_lines)
+
     for features, out_name in ((train_features, train_out_name),
                                (test_features, test_out_name)):
         with open(out_name, 'wb') as csvfile:
             # Output features in MATLAB-readable CSV format
             for row in features:
-                
                 csvfile.write(', '.join([str(feature) for feature in row]))
                 csvfile.write('\n')
 
